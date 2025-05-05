@@ -1,4 +1,4 @@
-package com.lacolinares.klima.ui.theme
+package com.lacolinares.klima.presensation.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
