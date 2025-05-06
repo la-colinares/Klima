@@ -6,11 +6,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.lacolinares.klima.presensation.screens.main.home.HomeScreen
+import com.lacolinares.klima.presensation.screens.main.home.HomeViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun BottomNavHost(
@@ -23,11 +28,14 @@ fun BottomNavHost(
         modifier = Modifier.padding(innerPadding)
     ) {
         composable(route = Routes.Main.BottomNavScreen.Home.route) {
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding), contentAlignment = Alignment.Center) {
-                Text(text = "Home")
-            }
+            val viewModel: HomeViewModel = koinViewModel()
+            val state by viewModel.state.collectAsStateWithLifecycle()
+            HomeScreen(
+                state = state,
+                onGetWeather = { location ->
+                    viewModel.fetchWeather(lat = location.latitude, lon = location.longitude)
+                }
+            )
         }
 
         composable(route = Routes.Main.BottomNavScreen.Weather.route) {

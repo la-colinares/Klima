@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.lacolinares.klima.presensation.navigation.BottomNavHost
@@ -44,7 +45,7 @@ fun MainScreen() {
                     actionIconContentColor = Neptune
                 ),
                 title = {
-                    Text(text = "Klima")
+                    Text(text = "Klima", fontWeight = FontWeight.Bold)
                 },
                 actions = {
                     IconButton(onClick = { }) {

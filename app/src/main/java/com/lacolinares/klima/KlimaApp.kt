@@ -2,6 +2,7 @@ package com.lacolinares.klima
 
 import android.app.Application
 import com.lacolinares.klima.di.databaseModule
+import com.lacolinares.klima.di.networkModule
 import com.lacolinares.klima.di.repositoryModule
 import com.lacolinares.klima.di.useCaseModule
 import com.lacolinares.klima.di.viewModelModule
@@ -15,6 +16,7 @@ class KlimaApp: Application() {
         startKoin {
             androidContext(this@KlimaApp)
             modules(
+                networkModule,
                 databaseModule,
                 repositoryModule,
                 useCaseModule,
