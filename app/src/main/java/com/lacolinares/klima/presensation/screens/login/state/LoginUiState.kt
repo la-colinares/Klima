@@ -7,5 +7,7 @@ data class LoginUiState (
     val password: String = "",
     val fieldErrors: Map<FieldType, String> = emptyMap(),
     val errorMessage: String? = null,
-    val isSuccess: Boolean = false
+    val isSuccess: Boolean = false,
+
+    val authenticated: Boolean? = null
 )

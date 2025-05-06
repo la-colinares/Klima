@@ -11,9 +11,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,6 +32,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.lacolinares.klima.R
 import com.lacolinares.klima.domain.validation.FieldType
 import com.lacolinares.klima.presensation.composables.KlimaPasswordField
@@ -52,8 +55,7 @@ fun LoginScreen(
     val context = LocalContext.current
 
     LaunchedEffect(state.isSuccess) {
-        if (state.isSuccess){
-            Toast.makeText(context, "Login Success!", Toast.LENGTH_SHORT).show()
+        if (state.isSuccess) {
             onLoginSuccess.invoke()
         }
     }
@@ -61,7 +63,12 @@ fun LoginScreen(
     LaunchedEffect(state.errorMessage) {
         state.errorMessage?.let { message ->
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            onEvent.invoke(LoginEvent.OnClearErrorMessage)
         }
+    }
+
+    LaunchedEffect(Unit) {
+        onEvent.invoke(LoginEvent.OnValidateUserAuth)
     }
 
     Scaffold(
@@ -130,7 +137,10 @@ fun LoginScreen(
                                 link = LinkAnnotation.Clickable(
                                     tag = "link_signup",
                                     styles = TextLinkStyles(style = SpanStyle(color = Neptune)),
-                                    linkInteractionListener = { onSignUp.invoke() }
+                                    linkInteractionListener = {
+                                        onEvent.invoke(LoginEvent.OnClearState)
+                                        onSignUp.invoke()
+                                    }
                                 )
                             ) {
                                 append("Signup")
@@ -138,6 +148,19 @@ fun LoginScreen(
                         },
                         color = Gray
                     )
+                }
+            }
+        }
+
+        state.authenticated?.let {
+            if (it) onLoginSuccess.invoke()
+        } ?: run {
+            Dialog(onDismissRequest = {}) {
+                Box(
+                    contentAlignment= Alignment.Center,
+                    modifier = Modifier.wrapContentSize()
+                ){
+                    CircularProgressIndicator(color = Neptune)
                 }
             }
         }

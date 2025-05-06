@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.lacolinares.klima.presensation.screens.login.LoginScreen
 import com.lacolinares.klima.presensation.screens.login.LoginViewModel
+import com.lacolinares.klima.presensation.screens.main.MainScreen
 import com.lacolinares.klima.presensation.screens.signup.SignUpScreen
 import com.lacolinares.klima.presensation.screens.signup.SignUpViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -35,7 +36,9 @@ fun AppNavigation(
                         navController.navigate(Routes.Auth.SignUp)
                     },
                     onLoginSuccess = {
-                        // Navigate to Main Screen
+                        navController.navigate(Routes.Main.Graph){
+                            popUpTo(Routes.Auth.Login) { inclusive = true }
+                        }
                     }
                 )
             }
@@ -55,6 +58,9 @@ fun AppNavigation(
                     }
                 )
             }
+        }
+        composable<Routes.Main.Graph> {
+            MainScreen()
         }
     }
 }
