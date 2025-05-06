@@ -1,5 +1,6 @@
 package com.lacolinares.klima.presensation.screens.signup
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,17 +22,19 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.lacolinares.klima.domain.validation.FieldType
 import com.lacolinares.klima.presensation.composables.KlimaPasswordField
 import com.lacolinares.klima.presensation.composables.KlimaTextField
+import com.lacolinares.klima.presensation.screens.signup.state.SignUpEvent
+import com.lacolinares.klima.presensation.screens.signup.state.SignUpUiState
 import com.lacolinares.klima.presensation.theme.Mirage
 import com.lacolinares.klima.presensation.theme.Neptune
 import com.lacolinares.klima.presensation.theme.Silver
@@ -40,13 +43,24 @@ import com.lacolinares.klima.presensation.theme.White
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpScreen(
+    state: SignUpUiState,
+    onEvent: (SignUpEvent) -> Unit,
     onBack: () -> Unit = {},
     onSignUpSuccess: () -> Unit = {}
 ) {
-    var fullName by remember { mutableStateOf("") }
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
+    val context = LocalContext.current
+
+    LaunchedEffect(state.isSuccess) {
+        if (state.isSuccess){
+            onSignUpSuccess.invoke()
+        }
+    }
+
+    LaunchedEffect(state.errorMessage) {
+        state.errorMessage?.let { message ->
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        }
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -94,36 +108,44 @@ fun SignUpScreen(
             )
             Spacer(modifier = Modifier.height(4.dp))
             KlimaTextField(
-                value = fullName,
-                onValueChange = { fullName = it },
+                value = state.form.fullName,
+                onValueChange = { onEvent(SignUpEvent.OnFullNameChanged(it)) },
                 label = "Full Name",
                 placeholder = "Enter your full name",
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                isError = !state.fieldErrors[FieldType.FULL_NAME].isNullOrEmpty(),
+                errorMessage = state.fieldErrors[FieldType.FULL_NAME]
             )
             KlimaTextField(
-                value = username,
-                onValueChange = { username = it },
-                label = "Username",
-                placeholder = "Enter your username",
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+                value = state.form.email,
+                onValueChange = { onEvent(SignUpEvent.OnEmailChanged(it)) },
+                label = "Email",
+                placeholder = "Enter your email",
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next) ,
+                isError = !state.fieldErrors[FieldType.EMAIL].isNullOrEmpty(),
+                errorMessage = state.fieldErrors[FieldType.EMAIL]
             )
             KlimaPasswordField(
-                value = password,
-                onValueChange = { password = it },
+                value = state.form.password,
+                onValueChange = { onEvent(SignUpEvent.OnPasswordChanged(it)) },
                 label = "Password",
                 placeholder = "Enter your password",
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                isError = !state.fieldErrors[FieldType.PASSWORD].isNullOrEmpty(),
+                errorMessage = state.fieldErrors[FieldType.PASSWORD]
             )
             KlimaPasswordField(
-                value = confirmPassword,
-                onValueChange = { confirmPassword = it },
+                value = state.form.confirmPassword,
+                onValueChange = { onEvent(SignUpEvent.OnConfirmPasswordChanged(it)) },
                 label = "Confirm Password",
                 placeholder = "Confirm your password",
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                isError = !state.fieldErrors[FieldType.CONFIRM_PASSWORD].isNullOrEmpty(),
+                errorMessage = state.fieldErrors[FieldType.CONFIRM_PASSWORD]
             )
             Spacer(modifier = Modifier.height(4.dp))
             Button(
-                onClick = {},
+                onClick = { onEvent(SignUpEvent.OnSubmit) },
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Neptune

@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import com.lacolinares.klima.presensation.navigation.AppNavigation
 import com.lacolinares.klima.presensation.screens.login.LoginScreen
 import com.lacolinares.klima.presensation.screens.signup.SignUpScreen
+import com.lacolinares.klima.presensation.screens.signup.state.SignUpUiState
 import com.lacolinares.klima.presensation.theme.KlimaTheme
 
 class MainActivity : ComponentActivity() {
@@ -34,5 +35,8 @@ fun LoginScreenPreview(){
 @Preview
 @Composable
 fun SignUpScreenPreview(){
-    SignUpScreen()
+    SignUpScreen(
+        state = SignUpUiState(),
+        onEvent = {}
+    )
 }
