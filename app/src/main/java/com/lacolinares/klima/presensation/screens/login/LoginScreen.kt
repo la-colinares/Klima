@@ -1,5 +1,6 @@
 package com.lacolinares.klima.presensation.screens.login
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,12 +17,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
@@ -32,8 +31,11 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lacolinares.klima.R
+import com.lacolinares.klima.domain.validation.FieldType
 import com.lacolinares.klima.presensation.composables.KlimaPasswordField
 import com.lacolinares.klima.presensation.composables.KlimaTextField
+import com.lacolinares.klima.presensation.screens.login.state.LoginEvent
+import com.lacolinares.klima.presensation.screens.login.state.LoginUiState
 import com.lacolinares.klima.presensation.theme.Gray
 import com.lacolinares.klima.presensation.theme.Mirage
 import com.lacolinares.klima.presensation.theme.Neptune
@@ -41,11 +43,26 @@ import com.lacolinares.klima.presensation.theme.White
 
 @Composable
 fun LoginScreen(
+    state: LoginUiState,
+    onEvent: (LoginEvent) -> Unit,
     onLoginSuccess: () -> Unit = {},
     onSignUp: () -> Unit = {},
 ) {
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+
+    val context = LocalContext.current
+
+    LaunchedEffect(state.isSuccess) {
+        if (state.isSuccess){
+            Toast.makeText(context, "Login Success!", Toast.LENGTH_SHORT).show()
+            onLoginSuccess.invoke()
+        }
+    }
+
+    LaunchedEffect(state.errorMessage) {
+        state.errorMessage?.let { message ->
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        }
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -74,22 +91,26 @@ fun LoginScreen(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 KlimaTextField(
-                    value = username,
-                    onValueChange = { username = it },
-                    label = "Username",
-                    placeholder = "Enter your username",
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+                    value = state.email,
+                    onValueChange = { onEvent.invoke(LoginEvent.OnEmailChanged(it)) },
+                    label = "Email",
+                    placeholder = "Enter your email",
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    isError = !state.fieldErrors[FieldType.EMAIL].isNullOrEmpty(),
+                    errorMessage = state.fieldErrors[FieldType.EMAIL]
                 )
                 KlimaPasswordField(
-                    value = password,
-                    onValueChange = { password = it },
+                    value = state.password,
+                    onValueChange = { onEvent.invoke(LoginEvent.OnPasswordChanged(it)) },
                     label = "Password",
                     placeholder = "Enter your password",
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    isError = !state.fieldErrors[FieldType.PASSWORD].isNullOrEmpty(),
+                    errorMessage = state.fieldErrors[FieldType.PASSWORD]
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Button(
-                    onClick = {},
+                    onClick = { onEvent.invoke(LoginEvent.OnLogin) },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Neptune

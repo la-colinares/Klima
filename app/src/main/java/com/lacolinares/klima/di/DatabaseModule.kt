@@ -4,6 +4,8 @@ import android.app.Application
 import androidx.room.Room
 import com.lacolinares.klima.data.local.database.KlimaDatabase
 import com.lacolinares.klima.data.local.database.dao.UserDao
+import com.lacolinares.klima.data.local.datastore.SessionManager
+import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
 val databaseModule = module {
@@ -17,4 +19,6 @@ val databaseModule = module {
     }
 
     single<UserDao> { get<KlimaDatabase>().userDao() }
+
+    single { SessionManager(androidContext()) }
 }

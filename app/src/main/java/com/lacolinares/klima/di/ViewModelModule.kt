@@ -1,9 +1,11 @@
 package com.lacolinares.klima.di
 
+import com.lacolinares.klima.presensation.screens.login.LoginViewModel
 import com.lacolinares.klima.presensation.screens.signup.SignUpViewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val viewModelModule = module {
     viewModelOf(::SignUpViewModel)
+    viewModelOf(::LoginViewModel)
 }

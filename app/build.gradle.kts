@@ -58,6 +58,8 @@ dependencies {
     implementation(libs.koin.core)
     implementation(libs.koin.android.compose)
 
+    implementation(libs.datastore.preferences)
+
     testImplementation(libs.junit)
     testImplementation(libs.mockK)
     testImplementation(libs.kotlinx.coroutines.test)

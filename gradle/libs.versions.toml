@@ -17,6 +17,7 @@ roomDatabase = "2.7.1"
 kspVersion = "2.0.21-1.0.26"
 koinBom = "4.0.3"
 mockK = "1.14.2"
+datastore = "1.1.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -42,6 +43,7 @@ koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koinBom" }
 koin-core = { module = "io.insert-koin:koin-core" }
 koin-android-compose = { module = "io.insert-koin:koin-androidx-compose"}
 mockK = { module = "io.mockk:mockk", version.ref = "mockK"}
+datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

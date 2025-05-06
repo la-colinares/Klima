@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.lacolinares.klima.presensation.screens.login.LoginScreen
+import com.lacolinares.klima.presensation.screens.login.LoginViewModel
 import com.lacolinares.klima.presensation.screens.signup.SignUpScreen
 import com.lacolinares.klima.presensation.screens.signup.SignUpViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -24,12 +25,17 @@ fun AppNavigation(
             startDestination = Routes.Auth.Login
         ) {
             composable<Routes.Auth.Login> {
+                val viewModel: LoginViewModel = koinViewModel()
+                val state by viewModel.state.collectAsStateWithLifecycle()
+
                 LoginScreen(
+                    state = state,
+                    onEvent = viewModel::onEvent,
                     onSignUp = {
                         navController.navigate(Routes.Auth.SignUp)
                     },
                     onLoginSuccess = {
-
+                        // Navigate to Main Screen
                     }
                 )
             }
@@ -37,6 +43,7 @@ fun AppNavigation(
             composable<Routes.Auth.SignUp> {
                 val viewModel: SignUpViewModel = koinViewModel()
                 val state by viewModel.state.collectAsStateWithLifecycle()
+
                 SignUpScreen(
                     state = state,
                     onEvent = viewModel::onEvent,

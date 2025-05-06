@@ -9,6 +9,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.lacolinares.klima.presensation.navigation.AppNavigation
 import com.lacolinares.klima.presensation.screens.login.LoginScreen
+import com.lacolinares.klima.presensation.screens.login.state.LoginUiState
 import com.lacolinares.klima.presensation.screens.signup.SignUpScreen
 import com.lacolinares.klima.presensation.screens.signup.state.SignUpUiState
 import com.lacolinares.klima.presensation.theme.KlimaTheme
@@ -29,7 +30,10 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun LoginScreenPreview(){
-    LoginScreen()
+    LoginScreen(
+        state = LoginUiState(),
+        onEvent = {}
+    )
 }
 
 @Preview

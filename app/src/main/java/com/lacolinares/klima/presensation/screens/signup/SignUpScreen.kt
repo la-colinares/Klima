@@ -52,6 +52,7 @@ fun SignUpScreen(
 
     LaunchedEffect(state.isSuccess) {
         if (state.isSuccess){
+            Toast.makeText(context, "Signup Successful", Toast.LENGTH_SHORT).show()
             onSignUpSuccess.invoke()
         }
     }
