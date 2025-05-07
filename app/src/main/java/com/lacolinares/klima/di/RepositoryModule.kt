@@ -9,5 +9,5 @@ import org.koin.dsl.module
 
 val repositoryModule = module {
     factory<UserRepository> { UserRepositoryImpl(get()) }
-    single<WeatherRepository> { WeatherRepositoryImpl(get(), get(named("openWeatherApiKey"))) }
+    single<WeatherRepository> { WeatherRepositoryImpl(get(), get(), get(named("openWeatherApiKey"))) }
 }

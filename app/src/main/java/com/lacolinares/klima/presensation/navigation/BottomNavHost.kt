@@ -1,13 +1,9 @@
 package com.lacolinares.klima.presensation.navigation
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -15,6 +11,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.lacolinares.klima.presensation.screens.main.home.HomeScreen
 import com.lacolinares.klima.presensation.screens.main.home.HomeViewModel
+import com.lacolinares.klima.presensation.screens.main.weather.WeatherListScreen
+import com.lacolinares.klima.presensation.screens.main.weather.WeatherListViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -39,11 +37,12 @@ fun BottomNavHost(
         }
 
         composable(route = Routes.Main.BottomNavScreen.Weather.route) {
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding), contentAlignment = Alignment.Center) {
-                Text(text = "Weathers")
-            }
+            val viewModel: WeatherListViewModel = koinViewModel()
+            val state by viewModel.state.collectAsStateWithLifecycle()
+            WeatherListScreen(
+                state = state,
+                onLoadWeathers = { viewModel.loadWeathers() }
+            )
         }
     }
 }

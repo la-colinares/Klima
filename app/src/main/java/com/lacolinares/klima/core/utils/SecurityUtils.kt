@@ -1,4 +1,4 @@
-package com.lacolinares.klima.util
+package com.lacolinares.klima.core.utils
 
 import java.security.MessageDigest
 

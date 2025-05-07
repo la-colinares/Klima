@@ -6,6 +6,8 @@ import com.lacolinares.klima.domain.usecase.session.ClearUserSessionUseCase
 import com.lacolinares.klima.domain.usecase.session.GetUserSessionUseCase
 import com.lacolinares.klima.domain.usecase.session.SaveUserSessionUseCase
 import com.lacolinares.klima.domain.usecase.weather.GetWeatherUseCase
+import com.lacolinares.klima.domain.usecase.weather.GetWeathersUseCase
+import com.lacolinares.klima.domain.usecase.weather.SaveWeatherUseCase
 import org.koin.dsl.module
 
 val useCaseModule = module {
@@ -16,5 +18,7 @@ val useCaseModule = module {
     factory { GetUserSessionUseCase(get()) }
     factory { ClearUserSessionUseCase(get()) }
 
+    factory { SaveWeatherUseCase(get()) }
     factory { GetWeatherUseCase(get()) }
+    factory { GetWeathersUseCase(get()) }
 }

@@ -8,10 +8,9 @@ import android.location.LocationManager
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -27,7 +26,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.LocationOn
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -45,15 +45,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.LocationServices
 import com.lacolinares.klima.R
-import com.lacolinares.klima.domain.model.WeatherInfo
+import com.lacolinares.klima.core.type.WeatherType
+import com.lacolinares.klima.core.utils.DateUtils
+import com.lacolinares.klima.presensation.composables.KlimaLoader
+import com.lacolinares.klima.presensation.theme.BlackPearl
 import com.lacolinares.klima.presensation.theme.Mirage
 import com.lacolinares.klima.presensation.theme.Neptune
 import com.lacolinares.klima.presensation.theme.White
-import com.lacolinares.klima.util.DateUtils
 import kotlinx.coroutines.launch
 
 @Composable
@@ -71,7 +72,8 @@ fun HomeScreen(
         }
     }
 
-    val locationPermissionLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+    val locationPermissionLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+        val isGranted = permissions.values.all { it }
         if (isGranted) {
             val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
             val isGpsEnabled = with(locationManager) {
@@ -105,31 +107,29 @@ fun HomeScreen(
     }
 
     LaunchedEffect(Unit) {
-        locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        locationPermissionLauncher.launch(
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+        )
     }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Mirage
     ) {
-        if (state.isLoading) {
-            Dialog(onDismissRequest = {}) {
-                Box(
-                    contentAlignment= Alignment.Center,
-                    modifier = Modifier.wrapContentSize()
-                ){
-                    CircularProgressIndicator(color = Neptune)
-                }
-            }
+        if (state.isLoading || state.weatherInfo == null) {
+            KlimaLoader()
         } else {
-            val weather = state.weatherInfo ?: WeatherInfo()
+            val weather = state.weatherInfo
 
             val weatherIcon = when {
                 DateUtils.isCurrentTimePastSixPM() -> R.drawable.ic_moon
                 else -> {
-                    when(weather.weatherName) {
-                        "Rain" -> R.drawable.ic_rain
-                        else -> R.drawable.ic_sun
+                    when(weather.getWeatherType()) {
+                        WeatherType.RAINY -> R.drawable.ic_rain
+                        WeatherType.SUNNY -> R.drawable.ic_sun
                     }
                 }
             }
@@ -179,62 +179,58 @@ fun HomeScreen(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ){
-                        Box(
-                            modifier = Modifier.wrapContentSize()
-                                .border(
-                                    width = 1.dp,
-                                    color = Neptune,
-                                    shape = RoundedCornerShape(4.dp)
-                                )
-                                .padding(16.dp)
-                                .weight(1f)
-                        ){
-                            Column(
-                                verticalArrangement = Arrangement.spacedBy(2.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_sunrise),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(48.dp),
-                                    tint = Neptune
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-                                Text(text = weather.getFormattedSunriseTime(), color = White, fontSize = 32.sp, fontWeight = FontWeight.Black)
-                                Text(text = weather.getFormattedSunriseDay(), color = White, fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
-                                Text(text = weather.getFormattedSunriseDate(), color = White, fontSize = 20.sp)
-                            }
-                        }
-
-                        Box(
-                            modifier = Modifier.wrapContentSize()
-                                .border(
-                                    width = 1.dp,
-                                    color = Neptune,
-                                    shape = RoundedCornerShape(4.dp)
-                                )
-                                .padding(16.dp)
-                                .weight(1f)
-                        ){
-                            Column(
-                                verticalArrangement = Arrangement.spacedBy(2.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_sunset),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(48.dp),
-                                    tint = Neptune
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-                                Text(text = weather.getFormattedSunsetTime(), color = White, fontSize = 32.sp, fontWeight = FontWeight.Black)
-                                Text(text = weather.getFormattedSunsetDay(), color = White, fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
-                                Text(text = weather.getFormattedSunsetDate(), color = White, fontSize = 20.sp)
-                            }
-                        }
+                        SunEventCard(
+                            modifier = Modifier.weight(1f),
+                            time = weather.getFormattedSunriseTime(),
+                            day = weather.getFormattedSunriseDay(),
+                            date = weather.getFormattedSunriseDate(),
+                            drawableId = R.drawable.ic_sunrise
+                        )
+                        SunEventCard(
+                            modifier = Modifier.weight(1f),
+                            time = weather.getFormattedSunsetTime(),
+                            day = weather.getFormattedSunsetDay(),
+                            date = weather.getFormattedSunsetDate(),
+                            drawableId = R.drawable.ic_sunset
+                        )
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun SunEventCard(
+    modifier: Modifier,
+    time: String,
+    day: String,
+    date: String,
+    drawableId: Int
+) {
+    Card(
+        modifier = Modifier.wrapContentSize().then(modifier),
+        shape = RoundedCornerShape(4.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = BlackPearl
+        ),
+        border = BorderStroke(1.dp, Neptune)
+    ){
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                painter = painterResource(drawableId),
+                contentDescription = null,
+                modifier = Modifier.size(48.dp),
+                tint = Neptune
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = time, color = White, fontSize = 32.sp, fontWeight = FontWeight.Black)
+            Text(text = day, color = White, fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
+            Text(text = date, color = White, fontSize = 20.sp)
         }
     }
 }

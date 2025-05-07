@@ -20,6 +20,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.lacolinares.klima.presensation.navigation.BottomNavHost
 import com.lacolinares.klima.presensation.navigation.Routes
+import com.lacolinares.klima.presensation.theme.BlackPearl
 import com.lacolinares.klima.presensation.theme.Mirage
 import com.lacolinares.klima.presensation.theme.Neptune
 import com.lacolinares.klima.presensation.theme.Silver
@@ -39,7 +40,7 @@ fun MainScreen() {
         topBar = {
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Mirage,
+                    containerColor = BlackPearl,
                     navigationIconContentColor = Neptune,
                     titleContentColor = Neptune,
                     actionIconContentColor = Neptune
@@ -59,7 +60,7 @@ fun MainScreen() {
         },
         bottomBar = {
             NavigationBar(
-                containerColor = Mirage,
+                containerColor = BlackPearl,
                 contentColor = Neptune
             ) {
                 val currentRoute = bottomNavController.currentBackStackEntryAsState().value?.destination?.route

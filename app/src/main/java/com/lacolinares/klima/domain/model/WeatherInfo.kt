@@ -1,9 +1,11 @@
 package com.lacolinares.klima.domain.model
 
-import com.lacolinares.klima.util.toDayOfWeek
-import com.lacolinares.klima.util.toFormattedDate
+import com.lacolinares.klima.core.type.WeatherType
+import com.lacolinares.klima.core.utils.toDayOfWeek
+import com.lacolinares.klima.core.utils.toFormattedDate
 
 data class WeatherInfo(
+    val id: Int = 0,
     val weatherDateTime: Long = 0L,
     val city: String = "",
     val country: String = "",
@@ -15,6 +17,13 @@ data class WeatherInfo(
     fun getFormattedLocation(): String = listOf(city, country).joinToString(", ")
 
     fun getFormattedCurrentDate(): String = weatherDateTime.toFormattedDate("MMMM d, yyyy")
+
+    fun getWeatherType(): WeatherType {
+        return when {
+            weatherName.contains("Rain", true) -> WeatherType.RAINY
+            else -> WeatherType.SUNNY
+        }
+    }
 
     fun getFormattedTemperature(): String = ((temperature * 10).toInt() / 10.0).toString().plus("°C")
 

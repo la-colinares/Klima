@@ -1,10 +1,10 @@
 package com.lacolinares.klima.domain.usecase
 
+import com.lacolinares.klima.core.utils.SecurityUtils
 import com.lacolinares.klima.domain.repository.UserRepository
 import com.lacolinares.klima.domain.validation.EmailValidator
 import com.lacolinares.klima.domain.validation.FieldType
 import com.lacolinares.klima.domain.validation.LoginResult
-import com.lacolinares.klima.util.SecurityUtils
 
 class LoginUseCase(private val userRepository: UserRepository) {
 

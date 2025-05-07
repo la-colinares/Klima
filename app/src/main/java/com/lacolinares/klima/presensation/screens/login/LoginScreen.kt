@@ -11,11 +11,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,9 +30,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import com.lacolinares.klima.R
 import com.lacolinares.klima.domain.validation.FieldType
+import com.lacolinares.klima.presensation.composables.KlimaLoader
 import com.lacolinares.klima.presensation.composables.KlimaPasswordField
 import com.lacolinares.klima.presensation.composables.KlimaTextField
 import com.lacolinares.klima.presensation.screens.login.state.LoginEvent
@@ -155,14 +153,7 @@ fun LoginScreen(
         state.authenticated?.let {
             if (it) onLoginSuccess.invoke()
         } ?: run {
-            Dialog(onDismissRequest = {}) {
-                Box(
-                    contentAlignment= Alignment.Center,
-                    modifier = Modifier.wrapContentSize()
-                ){
-                    CircularProgressIndicator(color = Neptune)
-                }
-            }
+            KlimaLoader()
         }
     }
 }
