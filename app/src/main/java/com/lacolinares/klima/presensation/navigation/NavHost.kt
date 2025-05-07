@@ -10,6 +10,7 @@ import androidx.navigation.compose.navigation
 import com.lacolinares.klima.presensation.screens.login.LoginScreen
 import com.lacolinares.klima.presensation.screens.login.LoginViewModel
 import com.lacolinares.klima.presensation.screens.main.MainScreen
+import com.lacolinares.klima.presensation.screens.main.MainScreenViewModel
 import com.lacolinares.klima.presensation.screens.signup.SignUpScreen
 import com.lacolinares.klima.presensation.screens.signup.SignUpViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -36,7 +37,7 @@ fun AppNavigation(
                         navController.navigate(Routes.Auth.SignUp)
                     },
                     onLoginSuccess = {
-                        navController.navigate(Routes.Main.Graph){
+                        navController.navigate(Routes.Main.Graph) {
                             popUpTo(Routes.Auth.Login) { inclusive = true }
                         }
                     }
@@ -60,7 +61,15 @@ fun AppNavigation(
             }
         }
         composable<Routes.Main.Graph> {
-            MainScreen()
+            val viewModel: MainScreenViewModel = koinViewModel()
+            MainScreen(
+                onLogout = {
+                    viewModel.onLogout()
+                    navController.navigate(Routes.Auth.Graph){
+                        popUpTo(Routes.Main.Graph) { inclusive = true }
+                    }
+                }
+            )
         }
     }
 }
