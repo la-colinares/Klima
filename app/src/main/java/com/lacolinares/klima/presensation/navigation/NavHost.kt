@@ -62,7 +62,12 @@ fun AppNavigation(
         }
         composable<Routes.Main.Graph> {
             val viewModel: MainScreenViewModel = koinViewModel()
+            val userFullName by viewModel.userFullName.collectAsStateWithLifecycle()
             MainScreen(
+                userFullName = userFullName,
+                onLoadUserFullName = {
+                    viewModel.loadUserFullName()
+                },
                 onLogout = {
                     viewModel.onLogout()
                     navController.navigate(Routes.Auth.Graph){

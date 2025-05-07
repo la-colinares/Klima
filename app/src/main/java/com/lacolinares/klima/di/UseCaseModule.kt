@@ -1,5 +1,6 @@
 package com.lacolinares.klima.di
 
+import com.lacolinares.klima.domain.usecase.GetUserFullNameUseCase
 import com.lacolinares.klima.domain.usecase.LoginUseCase
 import com.lacolinares.klima.domain.usecase.SignUpUseCase
 import com.lacolinares.klima.domain.usecase.session.ClearUserSessionUseCase
@@ -21,4 +22,6 @@ val useCaseModule = module {
     factory { SaveWeatherUseCase(get()) }
     factory { GetWeatherUseCase(get()) }
     factory { GetWeathersUseCase(get()) }
+
+    factory { GetUserFullNameUseCase(get()) }
 }
